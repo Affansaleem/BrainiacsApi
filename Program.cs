@@ -5,10 +5,15 @@ using Microsoft.EntityFrameworkCore;
 using BrainiacsApi.Data;
 using BrainiacsApi.Interface;
 using BrainiacsApi.Repository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Configuration.AddJsonFile("appsettings.json", optional: false);
 
 // Add DbContext and Identity services.
 builder.Services.AddDbContext<BrainiacsDbContext>(options =>
@@ -16,7 +21,7 @@ builder.Services.AddDbContext<BrainiacsDbContext>(options =>
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<BrainiacsDbContext>()
-    .AddDefaultTokenProviders(); // Add default token providers
+    .AddDefaultTokenProviders(); 
 
 
 builder.Services.AddTransient<SmtpClient>(provider =>
@@ -31,8 +36,54 @@ builder.Services.AddTransient<SmtpClient>(provider =>
 
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 
-// Add Swagger services.
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var secretKey = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(secretKey)
+    };
+});
+
+
 builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API", Version = "v1" });
+
+    // Define the JWT Bearer authentication
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer"
+    });
+
+    // Make sure Swagger UI requires a Bearer token specified in the Authorization header
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+            },
+            new string[] {}
+        }
+    });
+});
+
 
 var app = builder.Build();
 

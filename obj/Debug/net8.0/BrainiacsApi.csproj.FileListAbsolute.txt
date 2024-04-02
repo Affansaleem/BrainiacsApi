@@ -142,3 +142,4 @@ D:\.netApis\Brainiacs\BrainiacsApi\obj\Debug\net8.0\refint\BrainiacsApi.dll
 D:\.netApis\Brainiacs\BrainiacsApi\obj\Debug\net8.0\BrainiacsApi.pdb
 D:\.netApis\Brainiacs\BrainiacsApi\obj\Debug\net8.0\BrainiacsApi.genruntimeconfig.cache
 D:\.netApis\Brainiacs\BrainiacsApi\obj\Debug\net8.0\ref\BrainiacsApi.dll
+D:\.netApis\Brainiacs\BrainiacsApi\obj\Debug\net8.0\BrainiacsApi.sourcelink.json
