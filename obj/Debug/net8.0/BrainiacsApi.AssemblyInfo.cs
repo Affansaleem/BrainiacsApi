@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BrainiacsApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0f3ec2f3849acfb15c44d50f679d4802fec99455")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0c41ac3b3be115a09b0ad8c6533bf62c0e1fadaf")]
 [assembly: System.Reflection.AssemblyProductAttribute("BrainiacsApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BrainiacsApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
