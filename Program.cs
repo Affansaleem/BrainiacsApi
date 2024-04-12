@@ -9,15 +9,25 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using BrainiacsApi.Models;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Configuration.AddJsonFile("appsettings.json", optional: false);
-
+builder.Services.AddControllersWithViews()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+    });
 // Add DbContext and Identity services.
 builder.Services.AddDbContext<BrainiacsDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("BrainiacsConnection")));
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("BrainiacsConnection"));
+    options.LogTo(Console.WriteLine, LogLevel.Information); // This line will log SQL queries to the console
+});
+
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<BrainiacsDbContext>()
@@ -29,7 +39,7 @@ builder.Services.AddTransient<SmtpClient>(provider =>
     return new SmtpClient("smtp.gmail.com")
     {
         Port = 587,
-        Credentials = new NetworkCredential("m.affansalim@gmail.com", "frzuljqbytloyqvt"),
+        Credentials = new NetworkCredential("brainiacslogics@gmail.com", "sxoakmndanwlsgeu"),
         EnableSsl = true,
     };
 });

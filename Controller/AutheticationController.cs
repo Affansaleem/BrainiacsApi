@@ -4,7 +4,8 @@ using System.Text;
 using BrainiacsApi.Dtos;
 using BrainiacsApi.Dtos.SignUpDto;
     using BrainiacsApi.Interface;
-    using Microsoft.AspNetCore.Authentication;
+using BrainiacsApi.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
@@ -97,38 +98,38 @@ namespace BrainiacsApi.Controller
             
             [HttpGet]
             [Route("confirm-email")]
-            [Authorize]
+            [AllowAnonymous] // Allow anonymous access to this endpoint
             public async Task<IActionResult> ConfirmEmail(string userId, string token)
+{
+    if (userId == null || token == null)
     {
-        if (userId == null || token == null)
-        {
-            return BadRequest("Invalid token.");
-        }
+        return BadRequest("Invalid token.");
+    }
 
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null)
-        {
-            return BadRequest("User not found.");
-        }
+    var user = await _userManager.FindByIdAsync(userId);
+    if (user == null)
+    {
+        return BadRequest("User not found.");
+    }
 
-        if (user.EmailConfirmed)
-        {
-            return Ok("Email is already confirmed.");
-        }
+    if (user.EmailConfirmed)
+    {
+        return Ok("Email is already confirmed.");
+    }
 
-        var result = await _userManager.ConfirmEmailAsync(user, token);
-        if (result.Succeeded)
-        {
-            return Ok("Email confirmed successfully. You can now log in.");
-        }
+    var result = await _userManager.ConfirmEmailAsync(user, token);
+    if (result.Succeeded)
+    {
+        return Ok("Email confirmed successfully. You can now log in.");
+    }
 
-        return BadRequest("Failed to confirm email.");
-        }
+    return BadRequest("Failed to confirm email.");
+}
 
             [HttpPost]
             [Route("login")]
             public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
-{
+        {
     try
     {
         var user = await _userManager.FindByEmailAsync(loginDto.Email);
@@ -178,12 +179,5 @@ namespace BrainiacsApi.Controller
         return StatusCode(500, "An error occurred while processing the request.");
     }
     }
-
-            [HttpGet]
-            public async Task<IActionResult> Testing()
-            {
-                return Ok("This api localhost");
-
-            }
     }
 }
