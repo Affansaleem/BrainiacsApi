@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using BrainiacsApi.Data;
 using BrainiacsApi.Dtos;
 using Microsoft.AspNetCore.Authorization;
